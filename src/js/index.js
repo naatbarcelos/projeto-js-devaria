@@ -4,9 +4,19 @@ const $stepOne = $('.step.one');
 const $stepTwo = $('.step.two');
 const $stepThree = $('.step.three');
 
+const $containerBtnFormOne = $('#containerBtnFormOne');
+const $btnFormOne = $('#btnFormOne');
 const $inputNome = $('#nome');
 const $inputSobrenome = $('#sobrenome');
 const $inputDataNascimento = $('#dataNascimento');
+const $inputEmail = $('#email');
+const $inputMinibio = $('#minibio');
+
+
+let nomeValido = false;
+let sobrenomeValido = false;
+let dataNascimentoValido = false;
+let emailValido = false;
 
 function init(){
     $stepText.text('Passo 1 de 3 - Dados pessoais');
@@ -14,21 +24,63 @@ function init(){
     $stepTwo.hide();
     $stepThree.hide();
 
-    $inputNome.keyup(function(){
-        const closest = $(this).closest('.input-data');
-        if(!this.value || this.value.trim().length < 2){
-            return closest.addClass('error');
+    const minLengthText = 2;
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+
+    function validarInput(element, minLength, maxLenght, regex) {
+    const closest = $(element).closest('.input-data');
+        if(!element.value 
+            || (minLength && element.value.trim().length < minLenght)
+            || (maxLength && element.value.trim().length < maxLenght)
+            || (regex && element.value.toLowerCase().match(regex))
+            
+            ) {
+            closest.addClass('error');
+            return false;
         }
-        return closest.removeClass('error');
+        closest.removeClass('error');
+        return true;
+}
+
+function validaFormularioUm (){
+    if(nomeValido && sobrenomeValido && emailValido && dataNascimentoValido){
+        $containerBtnFormOne.removeClass('disabled');
+        $btnFormOne.removeClass('disabled');
+    }else{
+        $containerBtnFormOne.addClass('disabled');
+        $btnFormOne.addClass('disabled');
+    }
+}
+
+    $inputNome.keyup(function(){
+       nomeValido = validarInput(this, minLengthText);
+       validaFormularioUm();
     });
 
     $inputSobrenome.keyup(function(){
-        const closest = $(this).closest('.input-data');
-        if(!this.value || this.value.trim().length <2){
-            return closest.addClass('error')
-        }
-        return closest.removeClass('error');
+       sobrenomeValido = validarInput(this, minLengthText);
+       validaFormularioUm();
     });
+
+    $inputDataNascimento.keyup(function (){
+       dataNascimentoValido = validarInput(this, minLengthText);
+       validaFormularioUm();
+    })
+    
+    $inputDataNascimento.change(function (){
+        dataNascimentoValido = validarInput(this, minLengthText);
+        validaFormularioUm();
+    })
+
+    $inputEmail.keyup(function (){
+       emailValido = validarInput(this, null, null, emailRegex);
+       validaFormularioUm();
+    })
+
+    $inputMinibiokeyup(function (){
+        validaFormularioUm();
+     })
 
     $inputDataNascimento.on('focus', function(){
         this.type = 'date';
