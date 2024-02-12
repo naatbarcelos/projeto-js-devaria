@@ -3,11 +3,14 @@ const $stepDescription = $('#step-description');
 const $stepOne = $('.step.one');
 const $stepTwo = $('.step.two');
 const $stepThree = $('.step.three');
+const $title = $('#title');
 
 const $containerBtnFormOne = $('#containerBtnFormOne');
 const $btnFormOne = $('#btnFormOne');
 const $containerBtnFormTwo = $('#containerBtnFormTwo');
 const $btnFormTwo = $('#btnFormTwo');
+const $containerBtnFormThree = $('#containerBtnFormThree');
+const $btnFormThree = $('#btnFormThree');
 const $inputNome = $('#nome');
 const $inputSobrenome = $('#sobrenome');
 const $inputDataNascimento = $('#dataNascimento');
@@ -17,6 +20,8 @@ const $inputEndereco = $('#endereco');
 const $inputComplemento = $('#complemento');
 const $inputCidade = $('#cidade');
 const $inputCep = $('#cep');
+const $inputHabilidades = $('#habilidades');
+const $inputPontosForte = $('#pontosForte');
 
 
 let nomeValido = false;
@@ -26,6 +31,8 @@ let emailValido = false;
 let enderecoValido = false;
 let cidadeValida = false;
 let cepValido = false;
+let habilidadesValido = false;
+let pontosForteValido = false;
 
 function init(){
     $stepText.text('Passo 1 de 3 - Dados pessoais');
@@ -100,10 +107,48 @@ function validarFormularioDois(){
     if(enderecoValido && cidadeValida && cepValido){
         $containerBtnFormTwo.removeClass('disabled');
         $btnFormTwo.removeClass('disabled');
+        $btnFormTwo.off('click').on('click', iniciarFormulario3);
     }else{
         $containerBtnFormTwo.addClass('disabled');
         $btnFormTwo.addClass('disabled');
+        $btnFormTwo.off('click');
     }
+}
+
+function iniciarFormulario3(){
+    $stepText.text('Passo 3 de 3 - Fale sobre você')
+    $stepDescription.text('Para que possamos filtrar melhor você no processo conte-nos um pouco mais sobre suas habilidades e pontos de destaque');
+    $stepTwo.hide();
+    $stepThree.show();
+
+    $inputHabilidades.keyup(function(){
+        habilidadesValido = validarInput(this, minLengthTextArea);
+        validarFormularioTres();
+    });
+
+    $inputPontosForte.keyup(function(){
+        pontosForteValido = validarInput(this, minLengthTextArea);
+        validarFormularioTres();
+    });
+
+    function validarFormularioTres(){
+        if(habilidadesValido && pontosForteValido){
+            $containerBtnFormThree.removeClass('disabled');
+            $btnFormThree.removeClass('disabled');
+            $btnFormThree.off('click').on('click', finalizarFormulario);
+        }else{
+            $containerBtnFormThree.addClass('disabled');
+            $btnFormThree.addClass('disabled');
+            $btnFormThree.off('click');
+        }
+    }
+}
+
+function finalizarFormulario(){
+    $stepThree.hide();
+    $stepDescription.hide();
+    $title.text('Inscrição realizada com sucesso!');
+    $stepText.text('Agradecemos sua inscrição, entraremos em contato assim que possível, nosso prazo de análise é de cinco dias úteis');
 }
 
     $inputNome.keyup(function(){
@@ -151,5 +196,6 @@ function validarFormularioDois(){
 
 }
    
+  
 
 init();
