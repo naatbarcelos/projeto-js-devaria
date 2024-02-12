@@ -6,17 +6,26 @@ const $stepThree = $('.step.three');
 
 const $containerBtnFormOne = $('#containerBtnFormOne');
 const $btnFormOne = $('#btnFormOne');
+const $containerBtnFormTwo = $('#containerBtnFormTwo');
+const $btnFormTwo = $('#btnFormTwo');
 const $inputNome = $('#nome');
 const $inputSobrenome = $('#sobrenome');
 const $inputDataNascimento = $('#dataNascimento');
 const $inputEmail = $('#email');
 const $inputMinibio = $('#minibio');
+const $inputEndereco = $('#endereco');
+const $inputComplemento = $('#complemento');
+const $inputCidade = $('#cidade');
+const $inputCep = $('#cep');
 
 
 let nomeValido = false;
 let sobrenomeValido = false;
 let dataNascimentoValido = false;
 let emailValido = false;
+let enderecoValido = false;
+let cidadeValida = false;
+let cepValido = false;
 
 function init(){
     $stepText.text('Passo 1 de 3 - Dados pessoais');
@@ -25,7 +34,9 @@ function init(){
     $stepThree.hide();
 
     const minLengthText = 2;
+    const minLengthTextArea = 10;
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    const cepRegex = /^([\d]{2})([\d]{3})([\d]{3})|^[\d]{2}.[\d]{3}-[\d]{3}/;
 
 
     function validarInput(element, minLength, maxLength, regex) {
@@ -47,15 +58,52 @@ function validaFormularioUm (){
     if(nomeValido && sobrenomeValido && emailValido && dataNascimentoValido){
         $containerBtnFormOne.removeClass('disabled');
         $btnFormOne.removeClass('disabled');
-        $btnFormOne.on('click', iniciarFormulario2);
+        $btnFormOne.off('click').on('click', iniciarFormulario2);
     }else{
         $containerBtnFormOne.addClass('disabled');
         $btnFormOne.addClass('disabled');
+        $btnFormOne.off('click');
     }
 }
 
 function iniciarFormulario2(){
-    
+    $stepText.text('Passo 2 de 3 - Dados de correspondência');
+    $stepDescription.text('Precisamos desses dados para que possamos entrar em contato.');
+    $stepOne.hide();
+    $stepTwo.show();
+
+    $inputEndereco.keyup(function(){
+        enderecoValido = validarInput(this, minLengthTextArea);
+        validarFormularioDois();
+    });
+   
+    $inputCidade.keyup(function(){
+        cidadeValida = validarInput(this, minLengthText);
+        validarFormularioDois();
+    })
+
+    $inputCep.keyup(function(){
+        this.value = this.value.replace(/\D/g,'');
+        cepValido = validarInput(this, null, null, cepRegex);
+        if(cepValido){
+        this.value = this.value.replace(cepRegex, "$1.$2-$3");
+        }
+        validarFormularioDois();
+    });
+}
+
+    $inputComplemento.keyup(function(){
+        validarFormularioDois();
+    });
+
+function validarFormularioDois(){
+    if(enderecoValido && cidadeValida && cepValido){
+        $containerBtnFormTwo.removeClass('disabled');
+        $btnFormTwo.removeClass('disabled');
+    }else{
+        $containerBtnFormTwo.addClass('disabled');
+        $btnFormTwo.addClass('disabled');
+    }
 }
 
     $inputNome.keyup(function(){
