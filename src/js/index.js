@@ -135,12 +135,69 @@ function iniciarFormulario3(){
         if(habilidadesValido && pontosForteValido){
             $containerBtnFormThree.removeClass('disabled');
             $btnFormThree.removeClass('disabled');
-            $btnFormThree.off('click').on('click', finalizarFormulario);
+            $btnFormThree.off('click').on('click', salvarNoTrello);
         }else{
             $containerBtnFormThree.addClass('disabled');
             $btnFormThree.addClass('disabled');
             $btnFormThree.off('click');
         }
+    }
+}
+
+async function salvarNoTrello(){
+    try{
+        const nome = $inputNome.val();
+        const sobrenome = $inputSobrenome.val();
+        const email = $inputEmail.val();
+        const dataNascimento = $inputDataNascimento.val();
+        const minibio = $inputMinibio.val();
+        const endereco = $inputEndereco.val();
+        const complemento = $inputComplemento.val();
+        const cidade = $inputCidade.val();
+        const cep = $inputCep.val();
+        const habilidades = $inputHabilidades.val();
+        const pontosFortes = $inputPontosForte.val();
+    
+        if(!nome || !sobrenome || !email || !dataNascimento
+            || !endereco || !cidade || !cep || !habilidades 
+            || !pontosFortes){
+                return alert('Favor preencher todos os dados obrigatórios para seguir')
+            }
+
+        const body = {
+            name: "Candidato - " + nome + " " + sobrenome,
+            desc: `
+            Seguem dados do canditato(a):
+            ---------Dados pessoais---------
+            Nome: ${nome}
+            Sobrenome: ${sobrenome}
+            Email: ${email}
+            Data de nascimento: ${dataNascimento}
+            Minibio: ${minibio}
+
+            ---------Dados de endereço---------
+            Endereço: ${endereco}
+            Complemento: ${complemento}
+            Cidade: ${cidade}
+            Cep: ${cep}
+
+            ---------Dados do candidato---------
+            Habilidades: ${habilidades}
+            Pontos fortes: ${pontosFortes}
+            `
+        }
+
+        await fetch('https://api.trello.com/1/cards?idList=65d4b2fc384d856adc9ce20d&key=2474e46e700d7fdd9031d24fee261491&token=ATTAb822651a179b8e8098fa424d9f200b84c0b506aea5e352aca1cf8adc62e46fc872547FC7',{
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+
+        return finalizarFormulario();
+    }catch(e){
+        console.log('Ocorreu um erro ao salvar no Trello:', e);
     }
 }
 
